@@ -131,8 +131,8 @@ var Player = (function() {
         walk();
       }
 
-      if (isJumping) {
-        sprite.rotation += (Math.PI / 15) ;
+      if(isJumping) {
+        sprite.rotation += (Math.PI / 15);
       }
 
       if(sprite.y > gz.height + tile.height) {
@@ -164,13 +164,14 @@ var Player = (function() {
 var World = (function() {
   var segments = [];
   var speed = 1;
+  var realSpeed = 1;
   var arrowDown = false;
   var score = 0;
   var bestScore = 0;
 
   const SPEED_MAX = 3, SPEED_NORM = 1;
   keyController.register(39, function() {
-    if (!arrowDown) {
+    if(!arrowDown) {
       speed = speed * 2;
       arrowDown = true;
     }
@@ -213,8 +214,7 @@ var World = (function() {
     // 1 <- fall increment
     // 20 <-- vinit
     //return speed / 1 * (20 + Math.sqrt(Math.pow(20,2) - 2 * 1 * dH));
-    var normalSpeed = arrowDown ? speed / 2 : speed;
-    var tmp = (SPEED_MAX / normalSpeed) * (20 + Math.sqrt(400 - 2 * normalSpeed * dH));
+    var tmp = realSpeed * (20 + Math.sqrt(400 - 2 * dH));
     debug(tmp);
     return tmp;
   }
@@ -236,7 +236,7 @@ var World = (function() {
     } else {
       if(startX != 0) {
         //holeWidth = maxWidth;
-        holeWidth = random(150, 300)
+        holeWidth = random(150, maxWidth)
         //debug(holeWidth);
       }
     }
@@ -244,7 +244,7 @@ var World = (function() {
     var segment = {
       x: startX + holeWidth,
       y: segmentY,
-      width: random(40, 200),
+      width: random(100, 400),
       maxWidth: (maxWidth - holeWidth),
       height: 10,
     }
@@ -255,10 +255,11 @@ var World = (function() {
     reset: function() {
       speed = 1;
 
-      if (score > bestScore) {
+      if(score > bestScore) {
         bestScore = score;
       }
       score = 0;
+      segments = [];
     },
     fallOnSegment: function(sprite, fall) {
       for(var x = 0; x < segments.length; x++) {
@@ -288,13 +289,14 @@ var World = (function() {
         addSegment();
       }
 
+      realSpeed = 4 * (Math.log(speed) + 1);
       for(var i = 0; i < segments.length; i++) {
-        segments[i].x -= 4 * speed
-        if (segments[i].update) segments[i].update();
+        segments[i].x -= realSpeed;
+        if(segments[i].update) segments[i].update();
       }
 
       //update speed
-      speed += 0.005;
+      speed += 0.003;
     },
     draw: function(ctx) {
       strokeText(ctx, segments.length, {
@@ -305,8 +307,22 @@ var World = (function() {
       for(var i = 0; i < segments.length; i++) {
         var segment = segments[i];
         fillRect(ctx, segment);
-        drawLine(ctx, {x: segment.x, y: segment.y - 20}, {x: segment.x, y: segment.y + 20}, "blue");
-        drawLine(ctx, {x: segment.x + segment.maxWidth, y: segment.y - 20}, {x: segment.x + segment.maxWidth, y: segment.y + 20}, "red");
+        if(DEBUG) {
+          drawLine(ctx, {
+            x: segment.x,
+            y: segment.y - 20
+          }, {
+            x: segment.x,
+            y: segment.y + 20
+          }, "blue");
+          drawLine(ctx, {
+            x: segment.x + segment.maxWidth,
+            y: segment.y - 20
+          }, {
+            x: segment.x + segment.maxWidth,
+            y: segment.y + 20
+          }, "red");
+        }
       }
 
       // draw speed icon
@@ -444,8 +460,8 @@ function drawPlayer(ctx, sprite) {
 
   ctx.rotate(sprite.rotation)
   fillRect(ctx, {
-    x: - (sprite.width / 2),
-    y: - (sprite.height / 2),
+    x: -(sprite.width / 2),
+    y: -(sprite.height / 2),
     width: sprite.width,
     height: sprite.height
   })
