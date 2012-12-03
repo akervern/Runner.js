@@ -1,4 +1,4 @@
-const X = 60, Y = 30, DEBUG = false;
+const X = 60, Y = 30, DEBUG = true;
 
 /** INITIALIZATION **/
 
@@ -137,6 +137,7 @@ var Player = (function() {
 
       if(sprite.y > gz.height + tile.height) {
         Player.restart();
+        World.reset();
       }
     },
     draw: function(ctx) {
@@ -163,12 +164,19 @@ var Player = (function() {
 var World = (function() {
   var segments = [];
   var speed = 1;
+  var arrowDown = false;
+  var score = 0;
+  var bestScore = 0;
 
   const SPEED_MAX = 3, SPEED_NORM = 1;
   keyController.register(39, function() {
-    speed = SPEED_MAX;
+    if (!arrowDown) {
+      speed = speed * 2;
+      arrowDown = true;
+    }
   }, function() {
-    speed = SPEED_NORM;
+    speed = speed / 2;
+    arrowDown = false;
   })
 
   function getLastSegment() {
@@ -180,9 +188,11 @@ var World = (function() {
   }
 
   function cleanFirstSegment() {
-    var first = segments[0]
-    if(first && first.x + first.width < -50) {
+    var first = segments[0];
+
+    while(first && first.x + first.width < -50) {
       segments.shift()
+      first = segments[0];
     }
   }
 
@@ -203,7 +213,10 @@ var World = (function() {
     // 1 <- fall increment
     // 20 <-- vinit
     //return speed / 1 * (20 + Math.sqrt(Math.pow(20,2) - 2 * 1 * dH));
-    return SPEED_MAX / 1 * (20 + Math.sqrt(400 - 2 * 1 * dH));
+    var normalSpeed = arrowDown ? speed / 2 : speed;
+    var tmp = (SPEED_MAX / normalSpeed) * (20 + Math.sqrt(400 - 2 * normalSpeed * dH));
+    debug(tmp);
+    return tmp;
   }
 
   function buildSegment(startX, lastY) {
@@ -218,12 +231,12 @@ var World = (function() {
 
     // joining with previous segment?
     var holeWidth = 0;
-    if(random(-5, 1) <= 0) { //joining or not?
+    if(random(-2, 1) <= 0) { //joining or not?
       segmentY = lastY;
     } else {
       if(startX != 0) {
         //holeWidth = maxWidth;
-        holeWidth = random(50, maxWidth)
+        holeWidth = random(150, 300)
         //debug(holeWidth);
       }
     }
@@ -239,6 +252,14 @@ var World = (function() {
   }
 
   return {
+    reset: function() {
+      speed = 1;
+
+      if (score > bestScore) {
+        bestScore = score;
+      }
+      score = 0;
+    },
     fallOnSegment: function(sprite, fall) {
       for(var x = 0; x < segments.length; x++) {
         var el = segments[x];
@@ -260,6 +281,7 @@ var World = (function() {
       return true;
     },
     update: function() {
+      score += 10 * speed;
 
       cleanFirstSegment();
       while(needNewSegment()) {
@@ -270,6 +292,9 @@ var World = (function() {
         segments[i].x -= 4 * speed
         if (segments[i].update) segments[i].update();
       }
+
+      //update speed
+      speed += 0.005;
     },
     draw: function(ctx) {
       strokeText(ctx, segments.length, {
@@ -285,10 +310,21 @@ var World = (function() {
       }
 
       // draw speed icon
-      var mode = gz.update ? (speed == 1 ? ">" : (speed > 1 ? ">>" : ")")) : "||";
-      //"> ▶ Ⅱ ≫"
+      var mode = gz.update ? (arrowDown ? ">>" : ">") : "||";
       strokeText(ctx, mode, {
         x: tile.width / 2,
+        y: 14.5 * tile.height
+      });
+      strokeText(ctx, "V: " + Math.floor(speed), {
+        x: 1.5 * tile.width,
+        y: 14.5 * tile.height
+      });
+      strokeText(ctx, Math.floor(score), {
+        x: 4.5 * tile.width,
+        y: 14.5 * tile.height
+      });
+      strokeText(ctx, Math.floor(bestScore), {
+        x: 6.5 * tile.width,
         y: 14.5 * tile.height
       });
 
