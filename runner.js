@@ -1,4 +1,4 @@
-const X = 60, Y = 30, DEBUG = true;
+const X = 60, Y = 30, DEBUG = false;
 
 /** INITIALIZATION **/
 
@@ -214,7 +214,7 @@ var World = (function() {
     // 1 <- fall increment
     // 20 <-- vinit
     //return speed / 1 * (20 + Math.sqrt(Math.pow(20,2) - 2 * 1 * dH));
-    var tmp = realSpeed * (20 + Math.sqrt(400 - 2 * dH));
+    var tmp = realSpeed * (20 + Math.sqrt(400 + 2 * dH));
     debug(tmp);
     return tmp;
   }
@@ -227,7 +227,7 @@ var World = (function() {
 
     //only for test
     var dH = segmentY - lastY;
-    var maxWidth = getHoleMax(dH);
+    var maxWidth = 0;
 
     // joining with previous segment?
     var holeWidth = 0;
@@ -235,8 +235,9 @@ var World = (function() {
       segmentY = lastY;
     } else {
       if(startX != 0) {
+        maxWidth = getHoleMax(dH);
         //holeWidth = maxWidth;
-        holeWidth = random(150, maxWidth)
+        holeWidth = random(100, maxWidth)
         //debug(holeWidth);
       }
     }
@@ -259,6 +260,7 @@ var World = (function() {
         bestScore = score;
       }
       score = 0;
+      arrowDown = false;
       segments = [];
     },
     fallOnSegment: function(sprite, fall) {
