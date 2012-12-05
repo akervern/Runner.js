@@ -25,7 +25,7 @@ function log(obj) {
 }
 
 function random(min, max) {
-  return Math.ceil(Math.random() * (max - min) + min)
+  return _.random(min, max)
 }
 
 function drawLine(ctx, pt1, pt2, color) {

@@ -26,13 +26,10 @@ World = (function() {
     return null;
   }
 
-  function cleanFirstSegment() {
-    var first = segments[0];
-
-    while(first && first.x + first.width < -50) {
-      segments.shift()
-      first = segments[0];
-    }
+  function cleanOutsideSegment() {
+    segments = _.reject(segments, function(el) {
+      return el.x + el.width < -50;
+    });
   }
 
   function needNewSegment() {
@@ -44,7 +41,7 @@ World = (function() {
     var lastOne = getLastSegment();
     var lastX = 0;
     var lastY = gz.height * 0.7;
-    if (lastOne) {
+    if(lastOne) {
       lastX = lastOne.x + lastOne.width;
       lastY = lastOne.y;
     }
@@ -106,9 +103,8 @@ World = (function() {
       segments = [];
     },
     isOnSegment: function(sprite, fall) {
-      for(var x = 0; x < segments.length; x++) {
-        var el = segments[x];
-
+      var collide = false;
+      _.each(segments, function(el) {
         var elx = el.x,
           elwidth = el.x + el.width;
         var sx = sprite.x,
@@ -119,25 +115,25 @@ World = (function() {
           var spriteBtn = sprite.y + sprite.height;
           if(spriteBtn <= el.y && el.y < spriteBtn + fall) {
             sprite.y = el.y - sprite.height; //XXX May be somewhere else
-            return true;
+            collide = true;
+            return;
           }
         }
-      }
-      return false;
+      });
+      return collide;
     },
     update: function() {
       score += 10 * speed;
 
-      cleanFirstSegment();
+      cleanOutsideSegment();
       while(needNewSegment()) {
         addSegment();
       }
 
       realSpeed = 4 * (Math.log(speed) + 1);
-      for(var i = 0; i < segments.length; i++) {
-        segments[i].x -= realSpeed;
-        if(segments[i].update) segments[i].update();
-      }
+      _.each(segments, function(el) {
+        el.x -= realSpeed;
+      });
 
       //update speed
       speed += 0.005;
@@ -148,8 +144,7 @@ World = (function() {
         y: tile.height / 2
       })
 
-      for(var i = 0; i < segments.length; i++) {
-        var segment = segments[i];
+      _.each(segments, function(segment) {
         fillRect(ctx, segment);
         if(DEBUG) {
           drawLine(ctx, {
@@ -167,7 +162,7 @@ World = (function() {
             y: segment.y + 20
           }, "red");
         }
-      }
+      });
 
       // draw speed icon
       var mode = gz.update ? (arrowDown ? ">>" : ">") : "||";

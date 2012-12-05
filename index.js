@@ -24,8 +24,6 @@ window.requestAnimationFrame = function() {
   }
 }();
 
-var files = ["utils", "keyController", "Player", "World", "main"];
-
-for (var i = 0; i < files.length; i++) {
-  ejecta.include(files[i] + ".js");
-}
+_.each(["underscore-min", "utils", "keyController", "Player", "World", "main"], function(file) {
+  ejecta.include(file + ".js");
+})
