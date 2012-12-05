@@ -1,13 +1,12 @@
 /** MAIN LOOP **/
-
 var oldTime = new Date();
 (function mainLoop(time) {
   draw(ctx);
-  update();
+  update(time);
 
   // show FPS
   strokeText(ctx, Math.round(1000 / (time - oldTime)), {
-    x: (X - 0.5) * tile.width,
+    x: (X * .4) * tile.width,
     y: tile.height / 2
   })
   oldTime = time;
@@ -15,11 +14,12 @@ var oldTime = new Date();
   window.requestAnimationFrame(mainLoop);
 }(oldTime));
 
-function update() {
+function update(time) {
   if(!gz.update) {
     return;
   }
 
+  Background.update(time);
   World.update();
   Player.update();
 }
@@ -33,28 +33,13 @@ function draw(ctx) {
   ctx.fillStyle = "#ffffff"
   ctx.fillRect(0, 0, gz.width, gz.height);
 
-  // draw table lines
-  if(DEBUG) {
-    for(var i = 1; i < tile.x; i++) {
-      drawLine(ctx, {
-        x: i * tile.width,
-        y: 0
-      }, {
-        x: i * tile.width,
-        y: canvas.height
-      })
-    }
-    for(var i = 1; i < tile.y; i++) {
-      drawLine(ctx, {
-        x: 0,
-        y: i * tile.height
-      }, {
-        x: canvas.width,
-        y: i * tile.height
-      })
-    }
-  }
-
+  Background.draw(ctx);
   World.draw(ctx);
   Player.draw(ctx);
+}
+
+function restartGame() {
+  Player.restart();
+  World.reset();
+  Background.reset();
 }

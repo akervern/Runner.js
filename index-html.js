@@ -35,5 +35,5 @@ window.requestAnimationFrame = function() {
   }
 }();
 
-var World = {}, Player = {}, keyController = {};
-const Y = 30, X = 2 * Y, DEBUG = true;
+//var World = {}, Player = {}, keyController = {};
+const Y = 30, X = 2 * Y, DEBUG = false;

@@ -67,8 +67,7 @@ Player = (function() {
       }
 
       if(sprite.y > gz.height + tile.height) {
-        Player.restart();
-        World.reset();
+        restartGame();
       }
     },
     draw: function(ctx) {

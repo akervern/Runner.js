@@ -90,10 +90,14 @@ World = (function() {
     return segment
   }
 
+  function calcRealSpeed() {
+    realSpeed = 4 * (Math.log(speed) + 1);
+  }
+
   return {
     reset: function() {
       speed = INITIAL_SPEED;
-      realSpeed = 4 * (Math.log(speed) + 1);
+      calcRealSpeed();
 
       if(score > bestScore) {
         bestScore = score;
@@ -101,6 +105,9 @@ World = (function() {
       score = 0;
       arrowDown = false;
       segments = [];
+    },
+    getRealSpeed: function() {
+      return realSpeed;
     },
     isOnSegment: function(sprite, fall) {
       var collide = false;
@@ -130,7 +137,7 @@ World = (function() {
         addSegment();
       }
 
-      realSpeed = 4 * (Math.log(speed) + 1);
+      calcRealSpeed();
       _.each(segments, function(el) {
         el.x -= realSpeed;
       });
