@@ -6,7 +6,6 @@ var canvas = document.getElementById('canvas');
 canvas.scalingMode = 'fit-height';
 
 var ctx = canvas.getContext('2d');
-ctx.fillStyle = "#000000";
 
 var gz = {
   height: canvas.height,
@@ -14,7 +13,7 @@ var gz = {
   update: true,
   draw: true,
 }
-const X = 20, Y = 15, DEBUG = true;
+const X = 20, Y = 15, DEBUG = false;
 
 console.log(JSON.stringify(gz))
 

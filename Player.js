@@ -1,14 +1,20 @@
 Player = (function() {
   const fallSpeed = 100;
   const jumpSpeed = 20;
-  var fall, isFalling, sprite, isJumping;
+  var fall, isFalling, sprite, isJumping, rotate;
 
   // register keys event
   keyController.register(32, function() {
     gz.update = !gz.update;
   });
-  keyController.register(38, function() {
-    jump();
+  keyController.register(38, function(ts) {
+    if (ts > 100) {
+      stopJump();
+    } else {
+      jump();
+    }
+  }, function() {
+    stopJump();
   })
 
   function init() {
@@ -21,20 +27,24 @@ Player = (function() {
     };
     fall = 0;
     isFalling = true;
-    isJumping = false;
+    rotate = isJumping = false;
   }
   init();
 
   function jump() {
-    if(!isJumping) {
-      isJumping = true;
+    if(!isFalling) {
+      rotate = isJumping = true;
       fall = -jumpSpeed;
     }
   }
 
-  function walk() {
+  function stopJump(ts) {
     isJumping = false;
+  }
+
+  function walk() {
     fall = 0;
+    rotate = false;
     sprite.rotation = 0;
   }
 
@@ -43,14 +53,14 @@ Player = (function() {
       fall += 1;
       if(fall > fallSpeed) fall = fallSpeed;
 
-      isFalling = World.fallOnSegment(sprite, fall);
+      isFalling = !World.isOnSegment(sprite, fall);
       if(isFalling) {
         sprite.y += fall;
       } else {
         walk();
       }
 
-      if(isJumping) {
+      if(rotate) {
         sprite.rotation += (Math.PI / 15);
       }
 

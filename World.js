@@ -1,19 +1,20 @@
 World = (function() {
   var segments = [];
-  var speed = 1;
-  var realSpeed = 1;
-  var arrowDown = false;
+
   var score = 0;
   var bestScore = 0;
 
-  const SPEED_MAX = 3, SPEED_NORM = 1;
-  keyController.register(39, function() {
+  const INITIAL_SPEED = 2;
+  var speed = INITIAL_SPEED;
+  var realSpeed = 1;
+  var arrowDown = false;
+  keyController.register(37, function() {
     if(!arrowDown) {
-      speed = speed * 2;
+      speed = speed / 2;
       arrowDown = true;
     }
   }, function() {
-    speed = speed / 2;
+    speed = speed * 2;
     arrowDown = false;
   })
 
@@ -41,8 +42,12 @@ World = (function() {
 
   function addSegment() {
     var lastOne = getLastSegment();
-    var lastX = lastOne ? lastOne.x + lastOne.width : 0;
-    var lastY = lastOne ? lastOne.y : gz.height * 0.7;
+    var lastX = 0;
+    var lastY = gz.height * 0.7;
+    if (lastOne) {
+      lastX = lastOne.x + lastOne.width;
+      lastY = lastOne.y;
+    }
     segments.push(buildSegment(lastX, lastY));
   }
 
@@ -52,7 +57,6 @@ World = (function() {
     // 20 <-- vinit
     //return speed / 1 * (20 + Math.sqrt(Math.pow(20,2) - 2 * 1 * dH));
     var tmp = realSpeed * (20 + Math.sqrt(400 + 2 * dH));
-    debug(tmp);
     return tmp;
   }
 
@@ -91,7 +95,8 @@ World = (function() {
 
   return {
     reset: function() {
-      speed = 1;
+      speed = INITIAL_SPEED;
+      realSpeed = 4 * (Math.log(speed) + 1);
 
       if(score > bestScore) {
         bestScore = score;
@@ -100,7 +105,7 @@ World = (function() {
       arrowDown = false;
       segments = [];
     },
-    fallOnSegment: function(sprite, fall) {
+    isOnSegment: function(sprite, fall) {
       for(var x = 0; x < segments.length; x++) {
         var el = segments[x];
 
@@ -113,12 +118,12 @@ World = (function() {
         if(betweenSegment) {
           var spriteBtn = sprite.y + sprite.height;
           if(spriteBtn <= el.y && el.y < spriteBtn + fall) {
-            sprite.y = el.y - sprite.height;
-            return false;
+            sprite.y = el.y - sprite.height; //XXX May be somewhere else
+            return true;
           }
         }
       }
-      return true;
+      return false;
     },
     update: function() {
       score += 10 * speed;
@@ -135,7 +140,7 @@ World = (function() {
       }
 
       //update speed
-      speed += 0.003;
+      speed += 0.005;
     },
     draw: function(ctx) {
       strokeText(ctx, segments.length, {

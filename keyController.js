@@ -1,6 +1,7 @@
 keyController = (function() {
   var controllersD = {};
   var controllersU = {};
+  var timeElapsed = {};
 
   return {
     register: function(keyCode, callbackDown, callbackUp) {
@@ -14,12 +15,18 @@ keyController = (function() {
     },
     keyDown: function(keyCode) {
       if(controllersD[keyCode]) {
-        controllersD[keyCode](keyCode)
+        var now = Date.now();
+        if (!timeElapsed[keyCode]) { //called only if first press or after key release
+          timeElapsed[keyCode] = now;
+        }
+        var diff = Math.abs(now - timeElapsed[keyCode]);
+        controllersD[keyCode](diff)
       }
     },
     keyUp: function(keyCode) {
       if(controllersU[keyCode]) {
-        controllersU[keyCode](keyCode)
+        controllersU[keyCode](Date.now() - timeElapsed[keyCode])
+        timeElapsed[keyCode] = null;
       }
     }
   }

@@ -29,27 +29,30 @@ function draw(ctx) {
     return;
   }
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillRect(0,0,gz.width,gz.height);
+  //ctx.clearRect(0, 0, gz.width, gz.height);
+  ctx.fillStyle = "#ffffff"
+  ctx.fillRect(0, 0, gz.width, gz.height);
 
   // draw table lines
-  for(var i = 1; i < tile.x; i++) {
-    drawLine(ctx, {
-      x: i * tile.width,
-      y: 0
-    }, {
-      x: i * tile.width,
-      y: canvas.height
-    })
-  }
-  for(var i = 1; i < tile.y; i++) {
-    drawLine(ctx, {
-      x: 0,
-      y: i * tile.height
-    }, {
-      x: canvas.width,
-      y: i * tile.height
-    })
+  if(DEBUG) {
+    for(var i = 1; i < tile.x; i++) {
+      drawLine(ctx, {
+        x: i * tile.width,
+        y: 0
+      }, {
+        x: i * tile.width,
+        y: canvas.height
+      })
+    }
+    for(var i = 1; i < tile.y; i++) {
+      drawLine(ctx, {
+        x: 0,
+        y: i * tile.height
+      }, {
+        x: canvas.width,
+        y: i * tile.height
+      })
+    }
   }
 
   World.draw(ctx);
