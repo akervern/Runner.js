@@ -1,6 +1,6 @@
 Player = (function() {
   const fallSpeed = 100;
-  const jumpSpeed = 20;
+  const jumpSpeed = 10;
   var fall, isFalling, sprite, isJumping, rotate;
 
   // register keys event
@@ -8,7 +8,7 @@ Player = (function() {
     gz.update = !gz.update;
   });
   keyController.register(38, function(ts) {
-    if (ts > 100) {
+    if(ts > 150) {
       stopJump();
     } else {
       jump();
@@ -50,7 +50,9 @@ Player = (function() {
 
   return {
     update: function() {
-      fall += 1;
+      if(!isJumping) {
+        fall += 1;
+      }
       if(fall > fallSpeed) fall = fallSpeed;
 
       isFalling = !World.isOnSegment(sprite, fall);
