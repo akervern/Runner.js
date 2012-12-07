@@ -4,17 +4,15 @@ Player = (function() {
   var fall, isFalling, sprite, isJumping, rotate;
 
   // register keys event
-  keyController.register(32, function() {
+  ActionController.register(PAUSE_KEYCODE, function() {
     gz.update = !gz.update;
   });
-  keyController.register(38, function(ts) {
-    if(ts > 150) {
-      stopJump();
-    } else {
-      jump();
-    }
-  }, function() {
-    stopJump();
+  ActionController.register(JUMP_KEYCODE, function() {
+    log("jump")
+    jump();
+    _.delay(stopJump, 200);
+  }, function(ts) {
+    stopJump(ts);
   })
 
   function init() {

@@ -13,7 +13,7 @@ var gz = {
   update: true,
   draw: true,
 }
-const X = 20, Y = 15, DEBUG = false;
+const X = 20, Y = 15, DEBUG = true;
 
 console.log(JSON.stringify(gz))
 
@@ -24,6 +24,6 @@ window.requestAnimationFrame = function() {
   }
 }();
 
-["underscore-min", "utils", "keyController", "Player", "World", "Background", "main"].forEach(function(file) {
+["underscore-min", "utils", "ActionController", "Player", "World", "Background", "main"].forEach(function(file) {
   ejecta.include(file + ".js");
 })

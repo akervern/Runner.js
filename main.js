@@ -30,8 +30,10 @@ function draw(ctx) {
   }
 
   //ctx.clearRect(0, 0, gz.width, gz.height);
+  ctx.globalAlpha = 0.9;
   ctx.fillStyle = "#ffffff"
   ctx.fillRect(0, 0, gz.width, gz.height);
+  ctx.globalAlpha = 1.0;
 
   Background.draw(ctx);
   World.draw(ctx);

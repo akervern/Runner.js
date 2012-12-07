@@ -8,7 +8,7 @@ World = (function() {
   var speed = INITIAL_SPEED;
   var realSpeed = 1;
   var arrowDown = false;
-  keyController.register(37, function() {
+  ActionController.register(SWITCH_KEYCODE, function() {
     if(!arrowDown) {
       speed = speed / 2;
       arrowDown = true;
@@ -52,9 +52,8 @@ World = (function() {
     //Bind value to real varialbe ... maybe?
     // 1 <- fall increment
     // 20 <-- vinit
-    //return speed / 1 * (20 + Math.sqrt(Math.pow(20,2) - 2 * 1 * dH));
-    var tmp = realSpeed * (20 + Math.sqrt(400 + 2 * dH));
-    return tmp;
+    //return speed / 1 * (20 + Math.sqrt(Math.pow(20,2) + 2 * 1 * dH));
+    return realSpeed * (17 + Math.sqrt(289 + 2 * dH));
   }
 
   function buildSegment(startX, lastY) {
@@ -75,6 +74,7 @@ World = (function() {
       if(startX != 0) {
         maxWidth = getHoleMax(dH);
         //holeWidth = maxWidth;
+        debug(maxWidth)
         holeWidth = random(100, maxWidth)
         //debug(holeWidth);
       }
@@ -117,7 +117,8 @@ World = (function() {
         var sx = sprite.x,
           swidth = sprite.x + sprite.width;
 
-        var betweenSegment = elx < swidth && sx < elwidth;
+        var USER_HACKY_MARGE = 5;
+        var betweenSegment = elx - USER_HACKY_MARGE <= swidth && sx - USER_HACKY_MARGE <= elwidth; //XXX hacky ...
         if(betweenSegment) {
           var spriteBtn = sprite.y + sprite.height;
           if(spriteBtn <= el.y && el.y < spriteBtn + fall) {
@@ -140,6 +141,7 @@ World = (function() {
       calcRealSpeed();
       _.each(segments, function(el) {
         el.x -= realSpeed;
+        //el.x -= 0.5
       });
 
       //update speed

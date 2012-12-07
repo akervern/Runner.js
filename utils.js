@@ -14,6 +14,14 @@ console.log(tile);
 
 /** UTILITIES METHOD **/
 
+function intersect(point, sprite) {
+  return !(
+       point.x > sprite.x + sprite.width
+    || point.x < sprite.x
+    || point.y > sprite.y + sprite.height
+    || point.y < sprite.y);
+}
+
 function debug(obj) {
   if(DEBUG) {
     console.log("DEBUG:" + JSON.stringify(obj))
@@ -60,6 +68,7 @@ function drawPlayer(ctx, sprite) {
 }
 
 function strokeText(ctx, txt, pos) {
+  ctx.strokeStyle = "#000000"
   ctx.textBaseline = "middle"
   ctx.textAlign = "center"
   ctx.strokeText(txt, pos.x, pos.y)
@@ -91,6 +100,18 @@ function debugBoolean(value, index) {
 
 function drawCross(ctx, point, color) {
   var length = 15;
-  drawLine(ctx, {x: point.x, y: point.y - length}, {x: point.x, y: point.y + length}, color)
-  drawLine(ctx, {x: point.x - length, y: point.y}, {x: point.x + length, y: point.y}, color)
+  drawLine(ctx, {
+    x: point.x,
+    y: point.y - length
+  }, {
+    x: point.x,
+    y: point.y + length
+  }, color)
+  drawLine(ctx, {
+    x: point.x - length,
+    y: point.y
+  }, {
+    x: point.x + length,
+    y: point.y
+  }, color)
 }
