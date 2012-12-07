@@ -69,8 +69,8 @@ World = (function() {
       if(startX != 0) {
         maxWidth = getHoleMax(dH);
         //holeWidth = maxWidth;
-        holeWidth = 100
-        //holeWidth = random(100, maxWidth)
+        //holeWidth = 100
+        holeWidth = random(100, maxWidth)
       }
     }
 
