@@ -1,5 +1,5 @@
 Player = (function() {
-  const FALL_SPEED = 100, JUMP_SPEED = 10;
+  var FALL_SPEED = 100, JUMP_SPEED = 10;
 
   var fall, isFalling, sprite, isJumping, rotate;
 
@@ -26,7 +26,7 @@ Player = (function() {
 
   function init() {
     sprite = {
-      x: 70,
+      x: gz.width * 1/8,
       y: gz.height * 0.1,
       width: tile.width,
       height: tile.height,

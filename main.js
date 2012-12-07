@@ -6,7 +6,7 @@ var oldTime = new Date();
 
   // show FPS
   strokeText(ctx, Math.round(1000 / (time - oldTime)), {
-    x: (X * .4) * tile.width,
+    x: ((X - 1) * tile.width),
     y: tile.height / 2
   })
   oldTime = time;

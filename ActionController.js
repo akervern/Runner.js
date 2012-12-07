@@ -1,14 +1,14 @@
-const JUMP_KEYCODE = 38;
-const SWITCH_KEYCODE = 37;
-const PAUSE_KEYCODE = 32;
+var JUMP_KEYCODE = 38;
+var SWITCH_KEYCODE = 37;
+var PAUSE_KEYCODE = 32;
 
-const JUMP_ZONE = {
+var JUMP_ZONE = {
   x: 2 / 3 * gz.width,
   y: 0,
   width: gz.width / 3,
   height: gz.height
 }
-const SWITCH_ZONE = {
+var SWITCH_ZONE = {
   x: 0,
   y: 0,
   width: gz.width / 3,

@@ -3,6 +3,8 @@ World = (function() {
 
   var score = 0;
   var bestScore = 0;
+  var combo = 0;
+  var scoresSprite = [];
 
   var speed = INITIAL_SPEED = 2;
   var realSpeed = 1;
@@ -13,6 +15,9 @@ World = (function() {
 
   function cleanOutsideObjects() {
     segments = _.reject(segments, function(el) {
+      return el.x + el.width < -50;
+    });
+    scoresSprite = _.reject(scoresSprite, function(el) {
       return el.x + el.width < -50;
     });
   }
@@ -33,21 +38,13 @@ World = (function() {
     segments.push(buildSegment(lastX, lastY));
   }
 
-  function addBonus(segment) {
-    if (segments.length < 3) { return; }
-
-    var last = getLastSegment();
-    if ((last.x + last.width == segment.x && last.hasBonus) || random(0, 1) == 0) {
-
-    }
-  }
-
-  function getHoleMax(dH) {
+  function getHoleMax(dH, jump) {
     //Bind value to real varialbe ... maybe?
     // 1 <- fall increment
     // 20 <-- vinit
     //return speed / 1 * (20 + Math.sqrt(Math.pow(20,2) + 2 * 1 * dH));
-    return realSpeed * (17 + Math.sqrt(289 + 2 * dH));
+    //dH: -109: NaN speed: 9.056506908582694
+    return realSpeed * (jump + Math.sqrt(Math.abs((jump * jump) + 2 * dH)));
   }
 
   function buildSegment(startX, lastY) {
@@ -67,10 +64,12 @@ World = (function() {
       segmentY = lastY;
     } else {
       if(startX != 0) {
-        maxWidth = getHoleMax(dH);
+
+        maxWidth = getHoleMax(dH, 17);
+        minWidth = getHoleMax(dH, 10);
         //holeWidth = maxWidth;
-        //holeWidth = 100
-        holeWidth = random(100, maxWidth)
+        //holeWidth = minWidth;
+        holeWidth = random(minWidth, maxWidth)
       }
     }
 
@@ -78,9 +77,9 @@ World = (function() {
       x: startX + holeWidth,
       y: segmentY,
       width: random(200, 300),
-      height: 10,
+      height: tile.height / 2,
     }
-    if (startX == 0) {
+    if(startX == 0) {
       segment.width = 600;
       segment.color = 0;
     } else {
@@ -94,14 +93,42 @@ World = (function() {
     realSpeed = 4 * (Math.log(speed) + 1);
   }
 
+  function calcCombo(el) {
+    if(!el.alreadyOn) {
+      if(el.color == Player.sprite().mode) {
+        combo += 1;
+      } else {
+        if(combo > 0) {
+          scoresSprite.push({
+            x: Player.sprite().x + 20,
+            y: Player.sprite().y - 10,
+            score: combo
+          });
+        }
+        combo = 0;
+      }
+    }
+    el.alreadyOn = true;
+  }
+
   return {
     reset: function() {
       speed = INITIAL_SPEED;
       calcRealSpeed();
 
+      score = Math.ceil(score);
       if(score > bestScore) {
         bestScore = score;
       }
+
+      if(score > 0) {
+        scoresSprite.push({
+          x: Player.sprite().x,
+          y: Player.sprite().y - 20,
+          score: score
+        })
+      }
+      combo = 0;
       score = 0;
       segments = [];
     },
@@ -110,7 +137,7 @@ World = (function() {
     },
     isOnSegment: function(sprite, fall) {
       var collide = false;
-      _.each(segments, function(el) {
+      _.each(segments, function(el, index) {
         var elx = el.x,
           elwidth = el.x + el.width;
         var sx = sprite.x,
@@ -123,6 +150,9 @@ World = (function() {
           if(spriteBtn <= el.y && el.y < spriteBtn + fall) {
             sprite.y = el.y - sprite.height; //XXX May be somewhere else
             collide = true;
+
+            calcCombo(el);
+
             return;
           }
         }
@@ -130,7 +160,7 @@ World = (function() {
       return collide;
     },
     update: function() {
-      score += 10 * speed;
+      score += 2 * speed * (combo + 1);
 
       cleanOutsideObjects();
       while(needNewSegment()) {
@@ -142,16 +172,14 @@ World = (function() {
         el.x -= realSpeed;
         //el.x -= 0.5
       });
+      _.each(scoresSprite, function(el) {
+        el.x -= 1;
+      })
 
       //update speed
       speed += 0.005;
     },
     draw: function(ctx) {
-      strokeText(ctx, segments.length, {
-        x: tile.width / 2,
-        y: tile.height / 2
-      })
-
       _.each(segments, function(segment) {
         drawSegment(ctx, segment);
         if(DEBUG) {
@@ -171,28 +199,35 @@ World = (function() {
           }, "red");
         }
       });
+      _.each(scoresSprite, function(el) {
+        strokeText(ctx, el.score, el)
+      })
 
-      // draw speed icon
-      var mode = gz.update ? ">" : "||";
-      strokeText(ctx, mode, {
-        x: tile.width / 2,
-        y: (Y / 2 - 0.5) * tile.height
-      });
-      strokeText(ctx, "V: " + Math.floor(speed), {
-        x: 1.5 * tile.width,
-        y: (Y / 2 - 0.5) * tile.height
-      });
       strokeText(ctx, Math.floor(score), {
         x: Player.sprite().x,
-        y: Player.sprite().y - 20
+        y: Player.sprite().y - tile.height
       });
+      if(combo > 0) {
+        strokeText(ctx, Math.floor(combo), {
+          x: Player.sprite().x + tile.width,
+          y: Player.sprite().y - tile.height / 2
+        });
+      }
       strokeText(ctx, Math.floor(bestScore), {
-        x: 6.5 * tile.width,
-        y: (Y / 2 - 0.5) * tile.height
+        x: (tile.x - 2) * tile.width,
+        y: (tile.y - 1) * tile.height
       });
 
       // display generation lines
       if(DEBUG) {
+        strokeText(ctx, segments.length, {
+          x: tile.width / 2,
+          y: tile.height / 2
+        })
+        strokeText(ctx, "V: " + Math.floor(speed), {
+          x: 1.5 * tile.width,
+          y: (Y / 2 - 0.5) * tile.height
+        });
         drawLine(ctx, {
           x: 0,
           y: gz.height * 0.3

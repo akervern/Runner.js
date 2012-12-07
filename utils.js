@@ -1,18 +1,14 @@
 /** DRAW CONSTANT **/
-const MODE_0 = "#000000"
-const MODE_1 = "#ee1010"
+var MODE_0 = "#000000"
+var MODE_1 = "#ee1010"
 
 /** TILES SIZE **/
 var tile = {
   x: X,
   y: Y,
-  width: canvas.width / X,
-  height: canvas.height / Y
+  width: gz.width / X,
+  height: gz.height / Y
 }
-console.log({
-  width: gz.width,
-  height: gz.height
-})
 console.log(tile);
 
 /** UTILITIES METHOD **/
@@ -64,7 +60,7 @@ function drawSegment(ctx, segment) {
 
   ctx.textBaseline = "middle"
   ctx.textAlign = "center"
-  ctx.strokeText(segment.width, segment.x + segment.width / 2, segment.y + 15)
+  ctx.strokeText(segment.width, segment.x+ segment.width / 2, segment.y + segment.height + 10)
 
   ctx.restore();
 }
@@ -94,10 +90,10 @@ function drawPlayer(ctx, sprite) {
 }
 
 function strokeText(ctx, txt, pos) {
-  ctx.strokeStyle = "#000000"
+  ctx.fillStyle = "#000000"
   ctx.textBaseline = "middle"
   ctx.textAlign = "center"
-  ctx.strokeText(txt, pos.x, pos.y)
+  ctx.fillText(txt, pos.x, pos.y)
 }
 
 function strokeRect(ctx, sprite) {

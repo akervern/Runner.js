@@ -13,7 +13,7 @@ var gz = {
   update: true,
   draw: true,
 }
-const X = 20, Y = 15, DEBUG = true;
+var Y = 25, X = 1.5 * Y, DEBUG = false;
 
 console.log(JSON.stringify(gz))
 

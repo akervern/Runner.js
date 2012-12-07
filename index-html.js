@@ -14,7 +14,8 @@ var gz = {
   y: 0
 }
 
-if(window.devicePixelRatio) {
+
+if(true && window.devicePixelRatio) {
   var hidefCanvasWidth = canvas.getAttribute('width');
   var hidefCanvasHeight = canvas.getAttribute('height');
   var hidefCanvasCssWidth = hidefCanvasWidth;
@@ -26,6 +27,7 @@ if(window.devicePixelRatio) {
 
   gz.height = canvas.height / window.devicePixelRatio
   gz.width = canvas.width / window.devicePixelRatio
+  console.log("retina activated")
 }
 
 window.requestAnimationFrame = function() {
@@ -35,4 +37,4 @@ window.requestAnimationFrame = function() {
   }
 }();
 
-const Y = 40, X = 2 * Y, DEBUG = false;
+var Y = 20, X = 2 * Y, DEBUG = false;
