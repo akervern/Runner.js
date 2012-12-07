@@ -170,7 +170,6 @@ World = (function() {
       calcRealSpeed();
       _.each(segments, function(el) {
         el.x -= realSpeed;
-        //el.x -= 0.5
       });
       _.each(scoresSprite, function(el) {
         el.x -= 1;

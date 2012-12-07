@@ -15,6 +15,8 @@ var oldTime = new Date();
 }(oldTime));
 
 function update(time) {
+  Menu.update(time);
+
   if(!gz.update) {
     return;
   }
@@ -25,7 +27,7 @@ function update(time) {
 }
 
 function draw(ctx) {
-  if(!gz.draw) {
+    if(!gz.draw) {
     return;
   }
 
@@ -38,6 +40,16 @@ function draw(ctx) {
   Background.draw(ctx);
   World.draw(ctx);
   Player.draw(ctx);
+
+  Menu.draw(ctx);
+}
+
+function pause() {
+  gz.update = false;
+}
+
+function resume() {
+  gz.update = true;
 }
 
 function restartGame() {
