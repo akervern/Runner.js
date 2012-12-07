@@ -35,4 +35,4 @@ window.requestAnimationFrame = function() {
   }
 }();
 
-const Y = 30, X = 2 * Y, DEBUG = true;
+const Y = 40, X = 2 * Y, DEBUG = false;

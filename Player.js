@@ -1,19 +1,28 @@
 Player = (function() {
-  const fallSpeed = 100;
-  const jumpSpeed = 10;
+  const FALL_SPEED = 100, JUMP_SPEED = 10;
+
   var fall, isFalling, sprite, isJumping, rotate;
 
   // register keys event
+  // Pause action
   ActionController.register(PAUSE_KEYCODE, function() {
     gz.update = !gz.update;
   });
+
+  // Jump action
   ActionController.register(JUMP_KEYCODE, function() {
-    log("jump")
     jump();
     _.delay(stopJump, 200);
   }, function(ts) {
     stopJump(ts);
   })
+
+  // Switching action
+  ActionController.register(SWITCH_KEYCODE, function() {
+    sprite.mode = Math.abs(sprite.mode - 1);
+  }, function() {
+    //sprite.mode = 0;
+  });
 
   function init() {
     sprite = {
@@ -21,7 +30,8 @@ Player = (function() {
       y: gz.height * 0.1,
       width: tile.width,
       height: tile.height,
-      rotation: 0
+      rotation: 0,
+      mode: 0
     };
     fall = 0;
     isFalling = true;
@@ -32,7 +42,7 @@ Player = (function() {
   function jump() {
     if(!isFalling) {
       rotate = isJumping = true;
-      fall = -jumpSpeed;
+      fall = -JUMP_SPEED;
     }
   }
 
@@ -47,11 +57,14 @@ Player = (function() {
   }
 
   return {
+    sprite: function() {
+      return sprite;
+    },
     update: function() {
       if(!isJumping) {
         fall += 1;
       }
-      if(fall > fallSpeed) fall = fallSpeed;
+      if(fall > FALL_SPEED) fall = FALL_SPEED;
 
       isFalling = !World.isOnSegment(sprite, fall);
       if(isFalling) {

@@ -4,29 +4,14 @@ World = (function() {
   var score = 0;
   var bestScore = 0;
 
-  const INITIAL_SPEED = 2;
-  var speed = INITIAL_SPEED;
+  var speed = INITIAL_SPEED = 2;
   var realSpeed = 1;
-  var arrowDown = false;
-  ActionController.register(SWITCH_KEYCODE, function() {
-    if(!arrowDown) {
-      speed = speed / 2;
-      arrowDown = true;
-    }
-  }, function() {
-    speed = speed * 2;
-    arrowDown = false;
-  })
 
   function getLastSegment() {
-    var count = segments.length;
-    if(count > 0) {
-      return segments[count - 1];
-    }
-    return null;
+    return _.last(segments)
   }
 
-  function cleanOutsideSegment() {
+  function cleanOutsideObjects() {
     segments = _.reject(segments, function(el) {
       return el.x + el.width < -50;
     });
@@ -46,6 +31,15 @@ World = (function() {
       lastY = lastOne.y;
     }
     segments.push(buildSegment(lastX, lastY));
+  }
+
+  function addBonus(segment) {
+    if (segments.length < 3) { return; }
+
+    var last = getLastSegment();
+    if ((last.x + last.width == segment.x && last.hasBonus) || random(0, 1) == 0) {
+
+    }
   }
 
   function getHoleMax(dH) {
@@ -68,25 +62,31 @@ World = (function() {
 
     // joining with previous segment?
     var holeWidth = 0;
-    if(random(-2, 1) <= 0) { //joining or not?
+    var joining = random(0, 1) <= 0; //joining or not?
+    if(joining) {
       segmentY = lastY;
     } else {
       if(startX != 0) {
         maxWidth = getHoleMax(dH);
         //holeWidth = maxWidth;
-        debug(maxWidth)
-        holeWidth = random(100, maxWidth)
-        //debug(holeWidth);
+        holeWidth = 100
+        //holeWidth = random(100, maxWidth)
       }
     }
 
     var segment = {
       x: startX + holeWidth,
       y: segmentY,
-      width: random(100, 400),
-      maxWidth: (maxWidth - holeWidth),
+      width: random(200, 300),
       height: 10,
     }
+    if (startX == 0) {
+      segment.width = 600;
+      segment.color = 0;
+    } else {
+      segment.color = joining ? getLastSegment().color : random(0, 1);
+    }
+
     return segment
   }
 
@@ -103,7 +103,6 @@ World = (function() {
         bestScore = score;
       }
       score = 0;
-      arrowDown = false;
       segments = [];
     },
     getRealSpeed: function() {
@@ -133,7 +132,7 @@ World = (function() {
     update: function() {
       score += 10 * speed;
 
-      cleanOutsideSegment();
+      cleanOutsideObjects();
       while(needNewSegment()) {
         addSegment();
       }
@@ -154,7 +153,7 @@ World = (function() {
       })
 
       _.each(segments, function(segment) {
-        fillRect(ctx, segment);
+        drawSegment(ctx, segment);
         if(DEBUG) {
           drawLine(ctx, {
             x: segment.x,
@@ -174,7 +173,7 @@ World = (function() {
       });
 
       // draw speed icon
-      var mode = gz.update ? (arrowDown ? ">>" : ">") : "||";
+      var mode = gz.update ? ">" : "||";
       strokeText(ctx, mode, {
         x: tile.width / 2,
         y: (Y / 2 - 0.5) * tile.height
@@ -184,8 +183,8 @@ World = (function() {
         y: (Y / 2 - 0.5) * tile.height
       });
       strokeText(ctx, Math.floor(score), {
-        x: 4.5 * tile.width,
-        y: (Y / 2 - 0.5) * tile.height
+        x: Player.sprite().x,
+        y: Player.sprite().y - 20
       });
       strokeText(ctx, Math.floor(bestScore), {
         x: 6.5 * tile.width,

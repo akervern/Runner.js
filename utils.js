@@ -1,3 +1,7 @@
+/** DRAW CONSTANT **/
+const MODE_0 = "#000000"
+const MODE_1 = "#ee1010"
+
 /** TILES SIZE **/
 var tile = {
   x: X,
@@ -10,7 +14,6 @@ console.log({
   height: gz.height
 })
 console.log(tile);
-
 
 /** UTILITIES METHOD **/
 
@@ -50,21 +53,44 @@ function drawLine(ctx, pt1, pt2, color) {
   ctx.strokeStyle = oldColor;
 }
 
+function drawSegment(ctx, segment) {
+  ctx.save();
+
+  var color = segment.color == 1 ? MODE_1 : MODE_0;
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+
+  ctx.fillRect(segment.x, segment.y, segment.width, segment.height);
+
+  ctx.textBaseline = "middle"
+  ctx.textAlign = "center"
+  ctx.strokeText(segment.width, segment.x + segment.width / 2, segment.y + 15)
+
+  ctx.restore();
+}
+
 function drawPlayer(ctx, sprite) {
   var x = sprite.x + sprite.width / 2;
   var y = sprite.y + sprite.height / 2;
-  ctx.translate(x, y);
-
-  ctx.rotate(sprite.rotation)
-  fillRect(ctx, {
+  var player = {
     x: -(sprite.width / 2),
     y: -(sprite.height / 2),
-    width: sprite.width,
-    height: sprite.height
-  })
-  ctx.rotate(-sprite.rotation)
+    w: sprite.width,
+    h: sprite.height
+  };
 
-  ctx.translate(-x, -y);
+  ctx.save();
+
+  ctx.translate(x, y);
+  ctx.rotate(sprite.rotation)
+  ctx.lineWidth = 2;
+  ctx.fillStyle = sprite.mode == 1 ? MODE_0 : MODE_1
+  ctx.strokeStyle = sprite.mode != 1 ? MODE_0 : MODE_1
+
+  ctx.fillRect(player.x, player.y, player.w, player.h);
+  ctx.strokeRect(player.x, player.y, player.w, player.h);
+
+  ctx.restore();
 }
 
 function strokeText(ctx, txt, pos) {
