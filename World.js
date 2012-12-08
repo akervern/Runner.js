@@ -1,4 +1,7 @@
 World = (function() {
+  var maxSegmentY = gz.height * 0.3;
+  var minSegmentY = gz.height * 0.7;
+
   var segments = [];
 
   var score = 0;
@@ -50,8 +53,8 @@ World = (function() {
   function buildSegment(startX, lastY) {
     var segmentY = random(lastY - gz.height * 0.3, lastY + gz.height * 0.3)
     // bound segment y between height * 0.4 and height * 0.8
-    if(segmentY < gz.height * 0.3) segmentY = gz.height * 0.4;
-    if(segmentY > gz.height * 0.9) segmentY = gz.height * 0.8;
+    if(segmentY < maxSegmentY) segmentY = maxSegmentY;
+    if(segmentY > minSegmentY) segmentY = minSegmentY;
 
     //only for test
     var dH = segmentY - lastY;
@@ -119,6 +122,7 @@ World = (function() {
       score = Math.ceil(score);
       if(score > bestScore) {
         bestScore = score;
+        saveHighScore(score)
       }
 
       if(score > 0) {
@@ -203,13 +207,13 @@ World = (function() {
       })
 
       strokeText(ctx, Math.floor(score), {
-        x: Player.sprite().x,
-        y: Player.sprite().y - tile.height
+        x: Player.sprite().x - 0.5 * tile.width,
+        y: Player.sprite().y - 1.5 * tile.height
       });
       if(combo > 0) {
         strokeText(ctx, Math.floor(combo), {
           x: Player.sprite().x + tile.width,
-          y: Player.sprite().y - tile.height / 2
+          y: Player.sprite().y - 0.5 * tile.height
         });
       }
       strokeText(ctx, Math.floor(bestScore), {
@@ -229,17 +233,17 @@ World = (function() {
         });
         drawLine(ctx, {
           x: 0,
-          y: gz.height * 0.3
+          y: maxSegmentY
         }, {
           x: gz.width,
-          y: gz.height * 0.3
+          y: maxSegmentY
         }, 'red')
         drawLine(ctx, {
           x: 0,
-          y: gz.height * 0.8
+          y: minSegmentY
         }, {
           x: gz.width,
-          y: gz.height * 0.8
+          y: minSegmentY
         }, 'red')
       }
     }

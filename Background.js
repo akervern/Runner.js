@@ -42,27 +42,19 @@ Background = (function() {
 
       ctx.restore();
 
-      ctx.globalCompositeOperation = "lighter"
-
       _.each(circles, function(circle) {
         ctx.beginPath();
         ctx.arc(circle.x, circle.y, circle.radius, 0 , 2 * Math.PI, false);
         ctx.fill();
         ctx.closePath();
       })
-
-      ctx.globalCompositeOperation = "source-over"
-
     },
-    update: function(time) {
-      var diff = time - lastTime;
+    update: function(diff) {
 
       //theta += diff * Math.floor(World.getRealSpeed()) / 2000;
       theta += diff * 3 / 1000;
 
       tilt = Math[methods[0]](theta / 2);
-
-      lastTime = time;
     }
   }
 }())

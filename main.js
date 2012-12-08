@@ -1,15 +1,18 @@
 /** MAIN LOOP **/
 var oldTime = new Date();
-(function mainLoop(time) {
+(function mainLoop() {
+  var time = new Date() - oldTime;
+
   draw(ctx);
   update(time);
 
-  // show FPS
-  strokeText(ctx, Math.round(1000 / (time - oldTime)), {
-    x: ((X - 1) * tile.width),
-    y: tile.height / 2
-  })
-  oldTime = time;
+  if(showFPS) {
+    strokeText(ctx, Math.round(1000 / time), {
+      x: ((X - 1) * tile.width),
+      y: tile.height / 2
+    })
+    oldTime = new Date();
+  }
 
   window.requestAnimationFrame(mainLoop);
 }(oldTime));
@@ -27,7 +30,7 @@ function update(time) {
 }
 
 function draw(ctx) {
-    if(!gz.draw) {
+  if(!gz.draw) {
     return;
   }
 
@@ -56,4 +59,18 @@ function restartGame() {
   Player.restart();
   World.reset();
   Background.reset();
+}
+
+function saveHighScore(score) {
+  log("try to save")
+  gc.reportScore(gcName, score);
+  var prevHighScore = localStorage.getItem("maxScore");
+  if(!prevHighScore || prevHighScore < score) {
+    localStorage.setItem("maxScore", score);
+  }
+}
+
+function getHighScore() {
+  var highScore = localStorage.getItem("maxScore");
+  return highScore ? highScore : 0;
 }

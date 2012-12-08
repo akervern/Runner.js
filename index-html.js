@@ -37,4 +37,11 @@ window.requestAnimationFrame = function() {
   }
 }();
 
-var Y = 20, X = 2 * Y, DEBUG = false;
+var Y = 20,
+  X = 2 * Y,
+  DEBUG = false,
+  showFPS = true;
+
+// dummy GameCenter
+var gc = {}
+gc.reportScore = function() {}

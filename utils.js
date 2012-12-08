@@ -2,6 +2,8 @@
 var MODE_0 = "#000000"
 var MODE_1 = "#ee1010"
 
+var gcName = "highscore"
+
 /** TILES SIZE **/
 var tile = {
   x: X,
@@ -79,7 +81,7 @@ function drawPlayer(ctx, sprite) {
 
   ctx.translate(x, y);
   ctx.rotate(sprite.rotation)
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 3;
   ctx.fillStyle = sprite.mode == 1 ? MODE_0 : MODE_1
   ctx.strokeStyle = sprite.mode != 1 ? MODE_0 : MODE_1
 
