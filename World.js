@@ -122,7 +122,7 @@ World = (function() {
       score = Math.ceil(score);
       if(score > bestScore) {
         bestScore = score;
-        saveHighScore(score)
+        Main.saveHighScore(score)
       }
 
       if(score > 0) {

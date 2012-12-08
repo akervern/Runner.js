@@ -1,3 +1,58 @@
+/** MAIN OBJECT **/
+Main = (function() {
+  var lsHighScoreKey = "highScore";
+  var currentColors, lsColorsKey = "colors"
+
+  return {
+    // Color management
+    colors: function(index) {
+      if(!currentColors) {
+        var stored = localStorage.getItem(lsColorsKey)
+        if(stored) {
+          currentColors = JSON.parse(stored)
+        } else {
+          currentColors = ["#333333", "#ee1010"]
+        }
+      }
+      return currentColors[index];
+    },
+    setColors: function(color_1, color_2) {
+      localStorage.setItem(lsColorsKey, JSON.stringify([color_1, color_2]))
+      currentColors = [color_1, color_2]
+    },
+    resetColors: function() {
+      localStorage.removeItem(lsColorsKey)
+      currentColors = false
+    },
+
+    // Game play management
+    pause: function() {
+      gz.update = false;
+    },
+    resume: function() {
+      gz.update = true;
+    },
+    restart: function() {
+      Player.restart();
+      World.reset();
+      Background.reset();
+    },
+
+    // High score management
+    saveHighScore: function(score) {
+      gc.reportScore(gcName, score);
+
+      if(Main.getHighScore() < score) {
+        localStorage.setItem(lsHighScoreKey, score);
+      }
+    },
+    getHighScore: function() {
+      var highScore = localStorage.getItem(lsHighScoreKey);
+      return highScore ? highScore : 0;
+    }
+  }
+}());
+
 /** MAIN LOOP **/
 var oldTime = new Date();
 (function mainLoop() {
@@ -45,32 +100,4 @@ function draw(ctx) {
   Player.draw(ctx);
 
   Menu.draw(ctx);
-}
-
-function pause() {
-  gz.update = false;
-}
-
-function resume() {
-  gz.update = true;
-}
-
-function restartGame() {
-  Player.restart();
-  World.reset();
-  Background.reset();
-}
-
-function saveHighScore(score) {
-  log("try to save")
-  gc.reportScore(gcName, score);
-  var prevHighScore = localStorage.getItem("maxScore");
-  if(!prevHighScore || prevHighScore < score) {
-    localStorage.setItem("maxScore", score);
-  }
-}
-
-function getHighScore() {
-  var highScore = localStorage.getItem("maxScore");
-  return highScore ? highScore : 0;
 }

@@ -1,7 +1,3 @@
-/** DRAW CONSTANT **/
-var MODE_0 = "#000000"
-var MODE_1 = "#ee1010"
-
 var gcName = "highscore"
 
 /** TILES SIZE **/
@@ -54,7 +50,7 @@ function drawLine(ctx, pt1, pt2, color) {
 function drawSegment(ctx, segment) {
   ctx.save();
 
-  var color = segment.color == 1 ? MODE_1 : MODE_0;
+  var color = segment.color == 1 ? Main.colors(1) : Main.colors(0);
   ctx.strokeStyle = color;
   ctx.fillStyle = color;
 
@@ -82,8 +78,8 @@ function drawPlayer(ctx, sprite) {
   ctx.translate(x, y);
   ctx.rotate(sprite.rotation)
   ctx.lineWidth = 3;
-  ctx.fillStyle = sprite.mode == 1 ? MODE_0 : MODE_1
-  ctx.strokeStyle = sprite.mode != 1 ? MODE_0 : MODE_1
+  ctx.fillStyle = sprite.mode == 1 ? Main.colors(0) : Main.colors(1)
+  ctx.strokeStyle = sprite.mode != 1 ? Main.colors(0) : Main.colors(1)
 
   ctx.fillRect(player.x, player.y, player.w, player.h);
   ctx.strokeRect(player.x, player.y, player.w, player.h);

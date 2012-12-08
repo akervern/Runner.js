@@ -40,9 +40,9 @@ Menu = (function() {
     ctx.lineTo(left - 5, btn - 3)
     ctx.lineTo(left, top - ctx.lineWidth / 2)
     ctx.globalAlpha = 0.9;
-    ctx.fillStyle = MODE_0
+    ctx.fillStyle = Main.colors(0)
     ctx.fill();
-    ctx.strokeStyle = MODE_1
+    ctx.strokeStyle = Main.colors(1)
     ctx.stroke();
     ctx.closePath();
   }
@@ -51,7 +51,7 @@ Menu = (function() {
     push: function(menu) {
       texts.push(menu);
       startDisplaying();
-      pause();
+      Main.pause();
     },
     hide: function() {
       startHiding();
@@ -72,7 +72,7 @@ Menu = (function() {
         if(x < xDest) {
           x = xDest;
           mode = NOTHING;
-          resume();
+          Main.resume();
         }
 
         scale = 1 - (xOri - x) / (xOri - xDest)
