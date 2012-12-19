@@ -1,5 +1,9 @@
 var gcName = "highscore"
 
+var MODE_PLAYING = "playing"
+var MODE_PAUSE   = "pause"
+var MODE_MENU    = "in_menu"
+
 /** TILES SIZE **/
 var tile = {
   x: X,

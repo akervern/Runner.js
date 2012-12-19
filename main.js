@@ -28,9 +28,11 @@ Main = (function() {
     // Game play management
     pause: function() {
       gz.update = false;
+      Main.gameMode = MODE_PAUSE;
     },
     resume: function() {
       gz.update = true;
+      Main.gameMode = MODE_PLAYING;
     },
     restart: function() {
       Player.restart();
@@ -49,7 +51,8 @@ Main = (function() {
     getHighScore: function() {
       var highScore = localStorage.getItem(lsHighScoreKey);
       return highScore ? highScore : 0;
-    }
+    },
+    gameMode: MODE_PLAYING
   }
 }());
 

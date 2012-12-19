@@ -1,5 +1,9 @@
-ActionController.register(PAUSE_KEYCODE, PAUSE_ZONE, function() {
+ActionController.register(MODE_PLAYING, PAUSE_KEYCODE, PAUSE_ZONE, function() {
   Menu.push(["GameCenter", "Start"])
+})
+
+ActionController.register(MODE_MENU, PAUSE_KEYCODE, PAUSE_ZONE, function() {
+  Menu.hide();
 })
 
 Menu = (function() {
@@ -18,6 +22,10 @@ Menu = (function() {
     xDest = gz.width / 2;
     y = gz.height / 2;
     scale = 0;
+  }
+
+  function loaded() {
+    Main.gameMode = MODE_MENU;
   }
 
   function startHiding() {
@@ -63,6 +71,7 @@ Menu = (function() {
         if(x < xDest) {
           x = xDest;
           mode = MENU_HOLD;
+          loaded();
         }
 
         scale = (xOri - x) / (xOri - xDest)
@@ -78,9 +87,7 @@ Menu = (function() {
         scale = 1 - (xOri - x) / (xOri - xDest)
         break;
       case MENU_HOLD:
-        _.delay(function() {
-          Menu.hide();
-        }, 1000)
+
         break;
       }
     },

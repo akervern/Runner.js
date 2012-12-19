@@ -33,38 +33,47 @@ ActionController = (function() {
 
   function convertCoordToKeyCode(pos) {
     var zone = _.find(zones, function(zone) {
-      return intersect(pos, zone);
+      return intersect(pos, zone) && zone.gameMode == Main.gameMode;
     });
     return zone ? zone.keyCode : false;
   }
 
   return {
-    register: function(keyCode, zone, callbackDown, callbackUp) {
+    register: function(gameMode, keyCode, zone, callbackDown, callbackUp) {
       if(callbackDown) {
-        controllersD[keyCode] = callbackDown;
+        if (!controllersD[gameMode]) {
+          controllersD[gameMode] = {};
+        }
+        controllersD[gameMode][keyCode] = callbackDown;
       }
 
       if(callbackUp) {
-        controllersU[keyCode] = callbackUp
+        if (!controllersU[gameMode]) {
+          controllersU[gameMode] = {};
+        }
+        controllersU[gameMode][keyCode] = callbackUp
       }
 
       zone.keyCode = keyCode;
+      zone.gameMode = gameMode;
       zones.push(zone);
       zones = _.sortBy(zones, function() {
         return zone.order ? zone.order : 0;
       })
     },
     keyDown: function(keyCode) {
-      if(controllersD[keyCode]) {
+      var gm = Main.gameMode;
+      if(controllersD[gm] && controllersD[gm][keyCode]) {
         if(!timeElapsed[keyCode]) { //called only if first press or after key release
           timeElapsed[keyCode] = Date.now();
-          controllersD[keyCode]()
+          controllersD[gm][keyCode]()
         }
       }
     },
     keyUp: function(keyCode) {
-      if(controllersU[keyCode]) {
-        controllersU[keyCode](Date.now() - timeElapsed[keyCode])
+      var gm = Main.gameMode;
+      if(controllersU[gm] && controllersU[gm][keyCode]) {
+        controllersU[gm][keyCode](Date.now() - timeElapsed[keyCode])
       }
       timeElapsed[keyCode] = null;
     },
