@@ -14,7 +14,6 @@ var gz = {
   y: 0
 }
 
-
 if(true && window.devicePixelRatio) {
   var hidefCanvasWidth = canvas.getAttribute('width');
   var hidefCanvasHeight = canvas.getAttribute('height');

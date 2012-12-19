@@ -1,10 +1,10 @@
-const NOTHING = 0, MENU_APPEARRING = 1, MENU_HOLD = 2, MENU_HIDING = 3;
-
-ActionController.register(80, function() {
+ActionController.register(PAUSE_KEYCODE, PAUSE_ZONE, function() {
   Menu.push(["GameCenter", "Start"])
 })
 
 Menu = (function() {
+  const NOTHING = 0, MENU_APPEARRING = 1, MENU_HOLD = 2, MENU_HIDING = 3;
+
   var texts = [];
   var mode = 0, x, y, w = gz.width * 0.6,
     h = gz.height * 0.8,

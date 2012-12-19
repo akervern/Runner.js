@@ -3,14 +3,8 @@ Player = (function() {
 
   var fall, isFalling, sprite, isJumping, rotate;
 
-  // register keys event
-  // Pause action
-  ActionController.register(PAUSE_KEYCODE, function() {
-    gz.update = !gz.update;
-  });
-
   // Jump action
-  ActionController.register(JUMP_KEYCODE, function() {
+  ActionController.register(JUMP_KEYCODE, JUMP_ZONE, function() {
     jump();
     _.delay(stopJump, 200);
   }, function(ts) {
@@ -18,7 +12,7 @@ Player = (function() {
   })
 
   // Switching action
-  ActionController.register(SWITCH_KEYCODE, function() {
+  ActionController.register(SWITCH_KEYCODE, SWITCH_ZONE, function() {
     sprite.mode = Math.abs(sprite.mode - 1);
   }, function() {
     //sprite.mode = 0;
