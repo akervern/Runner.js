@@ -24,11 +24,12 @@ Menu = (function() {
     scale = 0;
   }
 
-  function loaded() {
+  function displayed() {
     Main.gameMode = MODE_MENU;
   }
 
   function startHiding() {
+    Main.pause();
     mode = MENU_HIDING;
     xOri = gz.width / 2;
     xDest = -0.5 * gz.width;
@@ -71,7 +72,7 @@ Menu = (function() {
         if(x < xDest) {
           x = xDest;
           mode = MENU_HOLD;
-          loaded();
+          displayed();
         }
 
         scale = (xOri - x) / (xOri - xDest)

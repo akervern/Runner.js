@@ -176,7 +176,7 @@ World = (function() {
         el.x -= realSpeed;
       });
       _.each(scoresSprite, function(el) {
-        el.x -= 1;
+        el.x -= 0.5;
       })
 
       //update speed
