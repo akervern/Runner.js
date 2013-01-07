@@ -7,21 +7,21 @@ var JUMP_ZONE = {
   y: 0,
   width: gz.width / 3,
   height: gz.height,
-  order: 0
+  order: 10
 }
 var SWITCH_ZONE = {
   x: 0,
   y: 0,
   width: gz.width / 3,
   height: gz.height,
-  order: 0
+  order: 10
 }
 var PAUSE_ZONE = {
   x: 5 / 6 * gz.width,
   y: 0,
   width: gz.width / 6,
   height: gz.height / 6,
-  order: -1
+  order: 0
 }
 
 ActionController = (function() {

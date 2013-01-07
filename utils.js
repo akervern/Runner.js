@@ -139,3 +139,7 @@ function drawCross(ctx, point, color) {
     y: point.y
   }, color)
 }
+
+function drawImage(ctx, name, point, size) {
+  ctx.drawImage(ResourcesLoader.getImage(name), point.x, point.y, size.width, size.height)
+}

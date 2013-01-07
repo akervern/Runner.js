@@ -6,16 +6,62 @@ ActionController.register(MODE_MENU, PAUSE_KEYCODE, PAUSE_ZONE, function() {
   Menu.hide();
 })
 
+ResourcesLoader.loadImage("menu", "images/menu.png")
+
+var sc_selectedIndex = 0;
+var sc_colors = [{
+  fg: "#333333",
+  bg: "#aaaaaa"
+}, {
+  fg: "#b2c840",
+  bg: "#7fbf81"
+}, {
+  fg: "#437fbf",
+  bg: "#d756cb"
+}, {
+  fg: "#56d7b0",
+  bg: "#437fbf"
+}, {
+  fg: "#bf4327",
+  bg: "#efda63"
+}];
+
+
 Menu = (function() {
   const NOTHING = 0, MENU_APPEARRING = 1, MENU_HOLD = 2, MENU_HIDING = 3;
 
   var texts = [];
-  var mode = 0, x, y, w = gz.width * 0.6,
+  var mode = 0,
+    x, y, w = gz.width * 0.6,
     h = gz.height * 0.8,
     scale, xOri, xDest;
 
+  /** REGISTERING ACTIONS **/
+  var SC_ZONE = {
+    x: -w / 2 + 15,
+    y: h / 2 - 120,
+    width: 35,
+    height: 80,
+    order: 10
+  },
+    SC_KEYCODE = 83;
+
+  ActionController.register(MODE_MENU, SC_KEYCODE, SC_ZONE, function() {
+    // Dirty <3
+    if(sc_selectedIndex >= sc_colors.length) {
+      Main.resetColors();
+      sc_selectedIndex = 0;
+    } else {
+      var color = sc_colors[sc_selectedIndex];
+      Main.setColors(color.fg, color.bg);
+      sc_selectedIndex += 1;
+    }
+  })
+
   function startDisplaying() {
-    if (mode != NOTHING) { return; }
+    if(mode != NOTHING) {
+      return;
+    }
 
     mode = MENU_APPEARRING;
     xOri = x = 1.5 * gz.width;
@@ -93,10 +139,12 @@ Menu = (function() {
       }
     },
     draw: function(ctx) {
-      if (mode == 0) { return; }
+      if(mode == 0) {
+        return;
+      }
 
       ctx.save();
-      ctx.globalAlpha = 0.6;
+      ctx.globalAlpha = 0.8;
       ctx.fillStyle = "#ffffff"
       ctx.fillRect(0, 0, gz.width, gz.height);
       ctx.restore();
@@ -111,6 +159,36 @@ Menu = (function() {
       case MENU_HOLD:
         drawMenu(ctx)
       }
+
+      ctx.globalAlpha = 1;
+
+      // Menu BG
+      var tempHack = 30;
+      drawImage(ctx, "menu", {
+        x: -w / 2 - tempHack,
+        y: -h / 2
+      }, {
+        width: w + tempHack,
+        height: h
+      })
+
+      // Game Colors
+      var spriteColor = {
+        x: -w / 2 + 15,
+        y: h / 2 - 120,
+        width: 35,
+        height: 40
+      }
+      fillRect(ctx, spriteColor, Main.colors(0));
+      spriteColor.y = h / 2 - 80
+      fillRect(ctx, spriteColor, Main.colors(1));
+      spriteColor.y = h / 2 - 120
+      spriteColor.height = 80
+
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#9e9e9e"
+      strokeRect(ctx, spriteColor);
+      // **
       ctx.restore();
     }
   }

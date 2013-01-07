@@ -58,7 +58,7 @@ Main = (function() {
 
 /** MAIN LOOP **/
 var oldTime = new Date();
-(function mainLoop() {
+function mainLoop() {
   var time = new Date() - oldTime;
 
   draw(ctx);
@@ -73,7 +73,10 @@ var oldTime = new Date();
   }
 
   window.requestAnimationFrame(mainLoop);
-}(oldTime));
+};
+ResourcesLoader.onload(function() {
+  mainLoop(oldTime)
+})
 
 function update(time) {
   Menu.update(time);
