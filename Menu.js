@@ -7,6 +7,7 @@ ActionController.register(MODE_MENU, PAUSE_KEYCODE, PAUSE_ZONE, function() {
 })
 
 ResourcesLoader.loadImage("menu", "images/menu.png")
+ResourcesLoader.loadFont("font_score", "images/font_score.png", "0123456789")
 
 var sc_selectedIndex = 0;
 var sc_colors = [{
@@ -188,7 +189,16 @@ Menu = (function() {
       ctx.lineWidth = 1;
       ctx.strokeStyle = "#9e9e9e"
       strokeRect(ctx, spriteColor);
-      // **
+
+      // Score
+      var charWidth = w / 16; // Arbitrary size
+      drawFont(ctx, "font_score", {x: 0, y: -60}, charWidth, "" + Main.getHighScore(), function(dSprite) {
+        ctx.textAlign = "left"
+        ctx.fillStyle = "#9e9e9e"
+        ctx.fillText("Highscore", dSprite.x, dSprite.y + dSprite.height + 10)
+      })
+
+      // End
       ctx.restore();
     }
   }
