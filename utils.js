@@ -143,3 +143,23 @@ function drawCross(ctx, point, color) {
 function drawImage(ctx, name, point, size) {
   ctx.drawImage(ResourcesLoader.getImage(name), point.x, point.y, size.width, size.height)
 }
+
+function drawFont(ctx, name, point, dCharWidth, text, callback) {
+  var img = ResourcesLoader.getImage(name);
+  var charWidth = parseFloat(img.dataset['charWidth']),
+    letters =  img.dataset['letters'],
+    startX = point.x - dCharWidth * (text.length / 2),
+    dHeight = (dCharWidth * img.height) / charWidth
+
+  _.each(text, function(letter, lIndex) {
+    var index = _.indexOf(letters, letter);
+    if (index < 0) return;
+
+    var sX = index * charWidth;
+    var dX = startX + lIndex * dCharWidth;
+    ctx.drawImage(img, sX, 0, charWidth, img.height, dX, point.y, dCharWidth, dHeight)
+  })
+  if (callback !== undefined) {
+    callback({x: startX, y: point.y, width: dCharWidth * text.length,height: dHeight});
+  }
+}

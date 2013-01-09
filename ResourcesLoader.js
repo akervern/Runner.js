@@ -25,6 +25,18 @@ ResourcesLoader = (function() {
     images[name] = img;
   }
 
+  that.loadFont = function(name, src, letters) {
+    totalResources += 1;
+    var img = new Image();
+    img.dataset["letters"] = letters;
+    img.onload = function() {
+      img.dataset["charWidth"] = img.width / letters.length
+      resourcesLoaded();
+    }
+    img.src = src;
+    images[name] = img;
+  }
+
   that.getImage = function(name) {
     return images[name];
   }
