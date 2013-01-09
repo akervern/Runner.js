@@ -120,12 +120,19 @@ World = (function() {
       calcRealSpeed();
 
       score = Math.ceil(score);
-      if(score > bestScore) {
-        bestScore = score;
-        Main.saveHighScore(score)
-      }
 
       if(score > 0) {
+        if(score > bestScore) {
+          bestScore = score;
+          if(Main.saveHighScore(score)) {
+            scoresSprite.push({
+              x: Player.sprite().x,
+              y: Player.sprite().y - 10,
+              score: "Highscore!"
+            })
+          }
+        }
+
         scoresSprite.push({
           x: Player.sprite().x,
           y: Player.sprite().y - 20,

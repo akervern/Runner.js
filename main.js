@@ -46,11 +46,15 @@ Main = (function() {
 
       if(Main.getHighScore() < score) {
         localStorage.setItem(lsHighScoreKey, score);
+        return true
       }
     },
     getHighScore: function() {
       var highScore = localStorage.getItem(lsHighScoreKey);
       return highScore ? highScore : 0;
+    },
+    resetHighScore: function() {
+      localStorage.setItem(lsHighScoreKey, 0);
     },
     gameMode: MODE_PLAYING
   }
