@@ -80,6 +80,8 @@ function mainLoop() {
 };
 ResourcesLoader.onload(function() {
   mainLoop(oldTime)
+
+  Menu.show()
 })
 
 function update(time) {

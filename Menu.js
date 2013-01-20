@@ -1,5 +1,5 @@
 ActionController.register(MODE_PLAYING, PAUSE_KEYCODE, PAUSE_ZONE, function() {
-  Menu.push(["GameCenter", "Start"])
+  Menu.show()
 })
 
 ActionController.register(MODE_MENU, PAUSE_KEYCODE, PAUSE_ZONE, function() {
@@ -31,7 +31,6 @@ var sc_colors = [{
 Menu = (function() {
   const NOTHING = 0, MENU_APPEARRING = 1, MENU_HOLD = 2, MENU_HIDING = 3;
 
-  var texts = [];
   var mode = 0,
     x, y, w = gz.width * 0.6,
     h = gz.height * 0.8,
@@ -104,8 +103,7 @@ Menu = (function() {
   }
 
   return {
-    push: function(menu) {
-      texts.push(menu);
+    show: function(menu) {
       startDisplaying();
       Main.pause();
     },
@@ -192,7 +190,10 @@ Menu = (function() {
 
       // Score
       var charWidth = w / 16; // Arbitrary size
-      drawFont(ctx, "font_score", {x: 0, y: -60}, charWidth, "" + Main.getHighScore(), function(dSprite) {
+      drawFont(ctx, "font_score", {
+        x: 0,
+        y: -60
+      }, charWidth, "" + Main.getHighScore(), function(dSprite) {
         ctx.textAlign = "left"
         ctx.fillStyle = "#9e9e9e"
         ctx.fillText("Highscore", dSprite.x, dSprite.y + dSprite.height + 10)

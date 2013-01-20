@@ -54,9 +54,11 @@ ActionController = (function() {
         controllersU[gameMode][keyCode] = callbackUp
       }
 
-      zone.keyCode = keyCode;
-      zone.gameMode = gameMode;
-      zones.push(zone);
+      // Mergin both objects, and create a new one.
+      zones.push(_.extend({}, zone, {
+        keyCode: keyCode,
+        gameMode: gameMode
+      }));
       zones = _.sortBy(zones, function() {
         return zone.order ? zone.order : 0;
       })
