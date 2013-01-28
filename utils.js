@@ -62,7 +62,7 @@ function drawSegment(ctx, segment) {
 
   ctx.textBaseline = "middle"
   ctx.textAlign = "center"
-  ctx.strokeText(segment.width, segment.x+ segment.width / 2, segment.y + segment.height + 10)
+  //ctx.strokeText(segment.width, segment.x+ segment.width / 2, segment.y + segment.height + 10)
 
   ctx.restore();
 }
