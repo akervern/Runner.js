@@ -1,4 +1,4 @@
-var gcName = "highscore"
+var GC_CATEGORY = "highscore"
 
 var MODE_PLAYING = "playing"
 var MODE_PAUSE   = "pause"

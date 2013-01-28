@@ -32,7 +32,7 @@ Menu = (function() {
   const NOTHING = 0, MENU_APPEARRING = 1, MENU_HOLD = 2, MENU_HIDING = 3;
 
   var mode = 0,
-    x, y, w = gz.width * 0.6,
+    x, y, w = gz.width * 0.9,
     h = gz.height * 0.8,
     scale, xOri, xDest;
 
@@ -57,6 +57,32 @@ Menu = (function() {
       sc_selectedIndex += 1;
     }
   })
+
+  var GC_ZONE = {
+    x: 50,
+    y: 0,
+    width: 50,
+    height: 50,
+    order: 0
+  }, GC_KEYCODE = 11;
+  ActionController.register(MODE_MENU, GC_KEYCODE, GC_ZONE, function() {
+    GameCenter.showLeaderboard(GC_CATEGORY)
+  })
+
+  var CHALLENGE_ZONE = {
+    x: 0,
+    y: 0,
+    width: 50,
+    height: 50,
+    order: 0
+  },
+    CHALLENGE_KEYCODE = 10;
+  ActionController.register(MODE_MENU, CHALLENGE_KEYCODE, CHALLENGE_ZONE, function() {
+    GameCenter.findFriendsLesserScore(GC_CATEGORY, Main.getHighScore(), function(scores) {
+      log("CHALLENGE CALLBACK CALLED")
+      log(JSON.stringify(scores));
+    })
+  });
 
   function startDisplaying() {
     if(mode != NOTHING) {
@@ -176,13 +202,13 @@ Menu = (function() {
         x: -w / 2 + 15,
         y: h / 2 - 120,
         width: 35,
-        height: 40
+        height: 30
       }
       fillRect(ctx, spriteColor, Main.colors(0));
-      spriteColor.y = h / 2 - 80
+      spriteColor.y = h / 2 - 60
       fillRect(ctx, spriteColor, Main.colors(1));
       spriteColor.y = h / 2 - 120
-      spriteColor.height = 80
+      spriteColor.height = 60
 
       ctx.lineWidth = 1;
       ctx.strokeStyle = "#9e9e9e"

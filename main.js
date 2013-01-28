@@ -42,7 +42,10 @@ Main = (function() {
 
     // High score management
     saveHighScore: function(score) {
-      gc.reportScore(gcName, score);
+      if (!GameCenter.authed) {
+        //GameCenter.authenticate();
+      }
+      GameCenter.reportScore(GC_CATEGORY, score);
 
       if(Main.getHighScore() < score) {
         localStorage.setItem(lsHighScoreKey, score);
@@ -81,7 +84,7 @@ function mainLoop() {
 ResourcesLoader.onload(function() {
   mainLoop(oldTime)
 
-  Menu.show()
+  //Menu.show()
 })
 
 function update(time) {

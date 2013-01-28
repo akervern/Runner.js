@@ -32,8 +32,8 @@ window.requestAnimationFrame = function() {
 })
 
 // At game start
-var gc = new Ejecta.GameCenter();
-gc.softAuthenticate(function(error) {
+var GameCenter = new Ejecta.GameCenter();
+GameCenter.softAuthenticate(function(error) {
   if(error) {
     console.log('Auth failed');
   } else {
@@ -44,4 +44,4 @@ gc.softAuthenticate(function(error) {
 //Setting up iAd
 var adBanner = new Ejecta.AdBanner();
 adBanner.isAtBottom = true;
-adBanner.show();
+//adBanner.show();

@@ -42,5 +42,6 @@ var Y = 20,
   showFPS = true;
 
 // dummy GameCenter
-var gc = {}
-gc.reportScore = function() {}
+var GameCenter = {}
+GameCenter.reportScore = function() {};
+GameCenter.authed = true;
