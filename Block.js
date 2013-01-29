@@ -10,6 +10,7 @@ Block = function(lastX, lastY) {
   var dH = segmentY - lastY;
 
   var segments = [];
+  // Add 1 segment to min nb every 4 speed points after reaching at least 10.
   var minSegmentNb = 1 + (World.getRealSpeed() > 10 ? (Math.floor((World.getRealSpeed() - 10) / 4)) : 0)
 
   _.times(_.random(minSegmentNb, minSegmentNb + 4), function(index) {
@@ -19,15 +20,19 @@ Block = function(lastX, lastY) {
       // if the first of a new block but not THE first one.
       maxWidth = World.getHoleMax(dH, 17);
       minWidth = World.getHoleMax(dH, 10);
-      //holeWidth = maxWidth;
-      //holeWidth = minWidth;
-      segment.x += random(minWidth, maxWidth)
+
+      var gap = random(minWidth, maxWidth); //Ensure to have at least a hole of 100
+      segment.x += gap < 100 ? _.random(100, 150) : gap;
     }
 
     segments.push(segment);
     lastX = segment.x + segment.width;
     lastY = segment.y;
   })
+
+  if(_.random(0, 2) == 0) {
+    BlockModifier.modify(segments)
+  }
 
   function buildSegment(startX, lastY) {
     var segment = {
@@ -60,7 +65,7 @@ Block = function(lastX, lastY) {
         x: segments[0].x + segmentGap,
         y: segments[0].y,
         width: (last.x + last.width) - segments[0].x - (2 * segmentGap),
-        height: - segments[0].y + gz.height,
+        height: -segments[0].y + gz.height,
       }, "#dddddd")
 
       _.each(segments, function(segment) {
@@ -119,3 +124,31 @@ Block = function(lastX, lastY) {
     }
   }
 }
+
+BlockModifier = (function() {
+  var modifiers = {};
+
+  return {
+    add: function(nbCell, modifier) {
+      var mods = modifiers[nbCell] || [];
+      mods.push(modifier)
+      modifiers[nbCell] = mods;
+    },
+    modify: function(segments) {
+      console.log("Modifying segments: " + segments.length)
+      var mods = modifiers[segments.length] || [];
+      if(mods.length > 0) {
+        mods[_.random(0, mods.length - 1)](segments);
+      }
+    }
+  };
+}())
+
+// Inverse middle segment color
+BlockModifier.add(5, function(segments) {
+  if(segments.length & 1) {
+    var mid = Math.floor(segments.length / 2);
+
+    segments[mid].color = Math.abs(segments[mid].color - 1);
+  }
+})
