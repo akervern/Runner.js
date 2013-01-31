@@ -16,7 +16,7 @@ World = (function() {
 
   function cleanOutsideObjects() {
     blocks = _.reject(blocks, function(block) {
-      return block.reject(-50) == 0;
+      return block.reject(-150) == 0;
     })
     scoresSprite = _.reject(scoresSprite, function(el) {
       return el.x + el.width < -50;
@@ -79,6 +79,7 @@ World = (function() {
       }
       combo = 0;
       score = 0;
+      blocks = [];
     },
     getRealSpeed: function() {
       return realSpeed;

@@ -3,7 +3,7 @@ Block = function(lastX, lastY) {
   var minSegmentY = gz.height * 0.7;
 
   var color = random(0, 1);
-  var segmentY = random(lastY - gz.height * 0.3, lastY + gz.height * 0.3)
+  var segmentY = random(lastY - gz.height * 0.3, lastY + gz.height * 0.3) // XXX WEIRD
   if(segmentY < maxSegmentY) segmentY = maxSegmentY;
   if(segmentY > minSegmentY) segmentY = minSegmentY;
 
@@ -13,7 +13,11 @@ Block = function(lastX, lastY) {
   // Add 1 segment to min nb every 4 speed points after reaching at least 10.
   var minSegmentNb = 1 + (World.getRealSpeed() > 10 ? (Math.floor((World.getRealSpeed() - 10) / 4)) : 0)
 
-  _.times(_.random(minSegmentNb, minSegmentNb + 4), function(index) {
+  var nbSegment = _.random(minSegmentNb, minSegmentNb + 3);
+  var generator = (_.random(0, 3) == 0) ? BlockGenerator.find(nbSegment, lastY) : null;
+  var startY = lastY;
+
+  _.times(nbSegment, function(index) {
     var segment = buildSegment(lastX, lastY)
 
     if(index == 0 && lastX > 0) {
@@ -25,20 +29,21 @@ Block = function(lastX, lastY) {
       segment.x += gap < 100 ? _.random(100, 150) : gap;
     }
 
+    // Modify segment
+    if(generator) {
+      generator(nbSegment, startY, index, segment)
+    }
+
     segments.push(segment);
     lastX = segment.x + segment.width;
-    lastY = segment.y;
+    segmentY = segment.y;
   })
-
-  if(_.random(0, 2) == 0) {
-    BlockModifier.modify(segments)
-  }
 
   function buildSegment(startX, lastY) {
     var segment = {
       x: startX,
       y: segmentY,
-      width: random(300, 450),
+      width: random(250, 400),
       height: tile.height / 2,
     }
     if(startX == 0) {
@@ -58,17 +63,35 @@ Block = function(lastX, lastY) {
       });
     },
     draw: function(ctx) {
-      var last = _.last(segments);
+
       var segmentGap = 5;
 
-      fillRect(ctx, {
-        x: segments[0].x + segmentGap,
-        y: segments[0].y,
-        width: (last.x + last.width) - segments[0].x - (2 * segmentGap),
-        height: -segments[0].y + gz.height,
-      }, "#dddddd")
+      _.each(segments, function(segment, index) {
+        // Draw background !
+        var x = segment.x;
+        var y = segment.y;
+        var width = segment.width;
+        var height = gz.height - segment.y;
 
-      _.each(segments, function(segment) {
+        if(index == 0) {
+          x += segmentGap;
+        }
+        if(index == segments.length - 1) {
+          width -= segmentGap;
+        }
+        if (segments.length == 1) {
+          width -= segmentGap;
+        }
+
+        fillRect(ctx, {
+          x: x,
+          y: y,
+          width: width,
+          height: height,
+        }, "#aaaaaa")
+
+
+        // Draw segments !!
         drawSegment(ctx, segment);
         if(DEBUG) {
           drawLine(ctx, {
@@ -125,30 +148,82 @@ Block = function(lastX, lastY) {
   }
 }
 
-BlockModifier = (function() {
-  var modifiers = {};
+BlockGenerator = (function() {
+  var validators = [];
+  var modifiers = [];
 
   return {
-    add: function(nbCell, modifier) {
-      var mods = modifiers[nbCell] || [];
-      mods.push(modifier)
-      modifiers[nbCell] = mods;
+    add: function(validator, modifier) {
+      validators.push(validator);
+      modifiers[validator] = modifier;
     },
-    modify: function(segments) {
-      console.log("Modifying segments: " + segments.length)
-      var mods = modifiers[segments.length] || [];
-      if(mods.length > 0) {
-        mods[_.random(0, mods.length - 1)](segments);
-      }
+    find: function(nbSegment, lastY) {
+      var validator = _.find(_.shuffle(validators), function(pValidator) {
+        return pValidator(nbSegment, lastY)
+      })
+      return validator && modifiers[validator] || null;
     }
   };
 }())
 
-// Inverse middle segment color
-BlockModifier.add(5, function(segments) {
-  if(segments.length & 1) {
-    var mid = Math.floor(segments.length / 2);
+/* SKELETON
+BlockGenerator.add(function(nbSegment) {
 
-    segments[mid].color = Math.abs(segments[mid].color - 1);
+}, function(nbSegment, startY, index, segment) {
+
+});
+*/
+
+// Inverse middle segment if nbSegment is odd and > 3
+BlockGenerator.add(function(nbSegment) {
+  return nbSegment > 3 && nbSegment & 1
+}, function(nbSegment, startY, index, segment) {
+  console.log("Middle color switch !")
+  var mid = Math.floor(nbSegment / 2);
+
+  if(index == mid) {
+    segment.color = Math.abs(segment.color - 1);
+  }
+});
+
+// Make a stair
+BlockGenerator.add(function(nbSegment, lastY) {
+  return nbSegment > 2 && lastY < gz.height * 0.4;
+}, function(nbSegment, startY, index, segment) {
+  var stairHeight = gz.height * 0.7 - startY;
+  var stepHeight = stairHeight / nbSegment;
+
+  console.log("Stair !")
+  if(index != 0) {
+    segment.y = segment.y + stepHeight
   }
 })
+
+// Create a hole
+BlockGenerator.add(function(nbSegment) {
+  return nbSegment & 1;
+}, function(nbSegment, startY, index, segment) {
+  console.log("Hole !!")
+  var mid = Math.floor(nbSegment / 2);
+
+  var holeHeight = 90;
+  var holeWidth = 30;
+  if(index == mid) {
+    segment.y += holeHeight;
+    segment.width -= 2 * holeWidth
+    segment.x += holeWidth
+  }
+  if(index == mid + 1) {
+    segment.x += holeWidth
+    segment.y -= holeHeight;
+  }
+});
+
+BlockGenerator.add(function(nbSegment) {
+  return nbSegment > 3;
+}, function(nbSegment, startY, index, segment) {
+  console.log("Quick jumps")
+  if(index != 0) {
+    segment.x += World.getHoleMax(0, 8)
+  }
+});
